@@ -64,6 +64,7 @@ function addRect() {
     listdiv.appendChild(newitem);
     var RectTextGroup = createGroupWithText(newShape, "Rect");
     newitem.innerHTML = "Rectangle Id: "+ RectTextGroup.attrs.id;
+    newitem.setAttribute("id", RectTextGroup.attrs.id);
     layer.add(RectTextGroup);
     layer.batchDraw();
 }
@@ -84,6 +85,7 @@ function addCircle() {
     listdiv.appendChild(newitem);
     var CircTextGroup = createGroupWithText(newShape, 'Circle')
     newitem.innerHTML = "Circle Id: "+ CircTextGroup.attrs.id;
+    newitem.setAttribute("id", CircTextGroup.attrs.id);
     layer.add(CircTextGroup);
     layer.batchDraw();
 }
@@ -100,14 +102,13 @@ function addEllipse() {
         fill: randomColor,
         stroke: 'black',
         strokeWidth: 2,
-        draggable: true,
     });
-    //newShape.id(GetRandomID());
     var listdiv = document.getElementById("shape-list");
     var newitem = document.createElement('div');
     listdiv.appendChild(newitem);
     var ElipTextGroup = createGroupWithText(newShape, 'Ellipse')
     newitem.innerHTML = "Ellipse Id: "+ ElipTextGroup.attrs.id;
+    newitem.setAttribute("id", ElipTextGroup.attrs.id);
     layer.add(ElipTextGroup);
     layer.batchDraw();
 }
@@ -123,13 +124,13 @@ function addTriangle() {
         fill: randomColor,
         stroke: 'black',
         strokeWidth: 2,
-        draggable: true,
     });
     var listdiv = document.getElementById("shape-list");
     var newitem = document.createElement('div');
     listdiv.appendChild(newitem);
     var TriTextGroup = createGroupWithText(newShape, 'Triangle')
     newitem.innerHTML = "Triangle Id: "+ TriTextGroup.attrs.id;
+    newitem.setAttribute("id", TriTextGroup.attrs.id);
     layer.add(TriTextGroup);
     layer.batchDraw();
 }
@@ -150,27 +151,27 @@ document.getElementById('add-triangle').addEventListener('click', () => {
     addTriangle();
 });
 
-function AddText(x, y, height) {
-    var textNode = new Konva.Text({
-        text: 'Some text here',
-        x: x,
-        y: y+height,
-        fontSize: 20,
-      });
-      layer.add(textNode);
+function EditText(group, user_text) {
+    var text = group.getChildren(function(node){
+        return node.getClassName() === 'Text';
+     });
+    text[0].setAttr('text', user_text);
+    layer.batchDraw();
+
 }
 
 let currentGroup;
 var menuNode = document.getElementById('menu');
-document.getElementById('add-text-button').addEventListener('click', () => {
-  AddText(currentShape.attrs.x, currentShape.attrs.y, currentShape.attrs.height);
+document.getElementById('edit-text-button').addEventListener('click', () => {
+  //AddText(currentShape.attrs.x, currentShape.attrs.y, currentShape.attrs.height);
+  var user_text = prompt("Enter the text you would like")
+  EditText(currentGroup, user_text);
 });
 
 document.getElementById('delete-button').addEventListener('click', () => {
-  console.log(currentGroup);
+  console.log(currentGroup.id());
   currentGroup.destroy();
-  //document.getElementById(currentShape.id()).remove();
-    //if ()
+  document.getElementById(currentGroup.id()).remove();
 });
 
 window.addEventListener('click', () => {
