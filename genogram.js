@@ -1,5 +1,5 @@
 const width = window.innerWidth - (window.innerWidth*0.20);
-const height = window.innerHeight - (window.innerHeight*0.15);
+const height = window.innerHeight - (window.innerHeight*0.20);
 
 const stage = new Konva.Stage({
     container: 'container',
