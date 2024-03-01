@@ -14,21 +14,33 @@ function GetRandomID() {
     return Math.floor(Math.random() * 1000000) + 1000000;
 }
 
-function createGroupWithText(shape, input_text = "Default"){
-    var x_centered = 25;
-    var y_centered = 25;
-    if (shape.getClassName() == 'Rect') {
-        x_centered = shape.attrs.x - shape.attrs.width/2.0;
-        y_centered = shape.attrs.y + shape.attrs.height;
+function centerTextForGroup(group){
+    var text;
+    var other_shape;
+    var group_list = group.getChildren(function(node){
+        return node;
+    });
+    for(i=0;i<group_list.length;i++){
+        if (group_list[i].getClassName() === 'Text'){
+            text = group_list[i]
+        }
+        else{
+            other_shape = group_list[i]
+        }
     }
-    else if (shape.getClassName() == 'Ellipse') {
-        x_centered = shape.attrs.x - shape.attrs.radiusX/2.0;
-        y_centered = shape.attrs.y + shape.attrs.radiusY;
+    if (other_shape.getClassName() === 'Rect'){
+        text.x(other_shape.attrs.x + (other_shape.attrs.width/2.0) - (text.width()/2.0));
     }
     else {
-        x_centered = shape.attrs.x - shape.attrs.radius/2.0;
-        y_centered = shape.attrs.y + shape.attrs.radius; 
+        text.x(other_shape.attrs.x - (text.width()/2.0));
     }
+    layer.batchDraw();
+}
+
+function createGroupWithText(shape, input_text = "Default"){
+    var y_centered = 25;
+    var x_centered = 25;
+
     var textNode = new Konva.Text({
         text: input_text,
         x: x_centered,
@@ -36,6 +48,21 @@ function createGroupWithText(shape, input_text = "Default"){
         fontSize: 20,
         name: 'Text',
       });
+
+    if (shape.getClassName() === 'Rect') {
+        y_centered = shape.attrs.y + shape.attrs.height + 2;
+        x_centered = shape.attrs.x + (shape.attrs.width/2.0) - (textNode.width()/2.0);
+    }
+    else if (shape.getClassName() === 'Ellipse') {
+        y_centered = shape.attrs.y + shape.attrs.radiusY + 2; 
+        x_centered = shape.attrs.x - (textNode.width()/2.0);
+    }
+    else {
+        y_centered = shape.attrs.y + shape.attrs.radius;
+        x_centered = shape.attrs.x - (textNode.width()/2.0);
+    }
+    textNode.x(x_centered);
+    textNode.y(y_centered);
     var text_shape_group = new Konva.Group({
         draggable: true,
         name: 'Group',
@@ -156,8 +183,8 @@ function EditText(group, user_text) {
         return node.getClassName() === 'Text';
      });
     text[0].setAttr('text', user_text);
+    centerTextForGroup(group);
     layer.batchDraw();
-
 }
 
 let currentGroup;
